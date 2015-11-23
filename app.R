@@ -31,7 +31,7 @@ server <- function(input, output) {
   dataInput <- reactive({
     validate(
       need(input$symb != "", "Please type a ticker"),
-      need(input$date[1] < input$date[2] < input$date[3], 'Start date is either missing or is later than end date.')
+      need(input$date[1] < input$date[2], 'Start date is either missing or is later than end date.')
     )
     
     options(download.file.method="wininet")
@@ -54,7 +54,7 @@ server <- function(input, output) {
     sReturns2 <- Delt(stock2)[-1]
     reg2 <- lm((sReturns2) ~ (mmReturns))
     
-    stock3 <- dataPrices[,5]
+    stock3 <- dataPrices[,4]
     sReturns3 <- Delt(stock3)[-1]
     reg3 <- lm((sReturns3) ~ (mmReturns))
     
@@ -62,7 +62,7 @@ server <- function(input, output) {
     rMM <- mean(mmReturns)*365
     rF <- as.vector(t[length(t)])/100
     rI <- rF +  reg$coefficients[2] * (rMM - rF)
-    theData <- list(x = data.frame(cbind(as.vector(sReturns), as.vector(mmReturns), as.vector(sReturns2), as.vector(sReturns3))), y = reg, z = rI[length(rI)], rF = rF, rMM = rMM, reg3 = reg3)
+    theData <- list(x = data.frame(cbind(as.vector(sReturns), as.vector(mmReturns), as.vector(sReturns2), as.vector(sReturns3))), y = reg, z = rI[length(rI)], rF = rF, rMM = rMM, reg2 = reg2, reg3 = reg3)
     
   })
   
@@ -103,4 +103,3 @@ server <- function(input, output) {
 
 
 shinyApp(ui = ui, server = server)
-
